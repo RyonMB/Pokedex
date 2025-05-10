@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Jobs\BatchPokemonJobs;
 use Illuminate\Support\Facades\Schedule;
 

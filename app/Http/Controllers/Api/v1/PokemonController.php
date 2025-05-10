@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace App\Http\Controllers\Api\v1;
 
 use App\Contracts\PokemonInterface;

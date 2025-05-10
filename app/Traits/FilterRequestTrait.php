@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace App\Traits;
 
 use ReflectionClass;

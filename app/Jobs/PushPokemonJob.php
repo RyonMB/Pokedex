@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace App\Jobs;
 
 use App\Contracts\PokemonApiInterface;

@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace App\Services\v2;
 
 use App\Contracts\PokemonApiInterface;
@@ -18,23 +16,6 @@ final class PokemonApiService implements PokemonApiInterface
     public function __construct()
     {
         $this->client = new Client;
-    }
-
-    private function safeRequest(string $method, string $uri): array
-    {
-        try {
-            $response = $this->client->request($method, $uri);
-            return json_decode($response->getBody(), true);
-        } catch (RequestException $e) {
-            $statusCode = $e->hasResponse() ? $e->getResponse()->getStatusCode() : null;
-
-            return [
-                'error' => true,
-                'message' => 'Pokemon API request failed',
-                'details' => $e->getMessage(),
-                'status_code' => $statusCode,
-            ];
-        }
     }
 
     public function getPokemon(string|int $pokemonId): array
@@ -95,5 +76,23 @@ final class PokemonApiService implements PokemonApiInterface
             'name' => $nameTranslations,
             'effect_entries' => $effectTranslations,
         ];
+    }
+
+    private function safeRequest(string $method, string $uri): array
+    {
+        try {
+            $response = $this->client->request($method, $uri);
+
+            return json_decode($response->getBody(), true);
+        } catch (RequestException $e) {
+            $statusCode = $e->hasResponse() ? $e->getResponse()->getStatusCode() : null;
+
+            return [
+                'error' => true,
+                'message' => 'Pokemon API request failed',
+                'details' => $e->getMessage(),
+                'status_code' => $statusCode,
+            ];
+        }
     }
 }

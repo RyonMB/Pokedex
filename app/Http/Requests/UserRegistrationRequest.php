@@ -28,6 +28,4 @@ final class UserRegistrationRequest extends FormRequest
             'language' => 'nullable|string|max:2|default:en',
         ];
     }
-
-    
 }

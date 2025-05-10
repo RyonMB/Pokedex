@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace App\Services\v2;
 
 use App\Contracts\PokemonApiInterface;
@@ -21,6 +19,7 @@ final readonly class PokemonService implements PokemonInterface
 
     public function findOrFetchPokemon(string $pokemonName, string $locale = 'en'): Pokemon
     {
+        $pokemonName = strtolower($pokemonName);
         $cacheKey = "pokemon:$pokemonName-$locale";
         $cacheTag = "pokemon:$pokemonName";
 
@@ -29,14 +28,15 @@ final readonly class PokemonService implements PokemonInterface
         if ($pokemon) {
             return $pokemon;
         }
-        
+
         // Try to get from database
         $pokemon = Pokemon::where('name', $pokemonName)->with('abilities')->first();
         if ($pokemon) {
             Cache::tags($cacheTag)->put($cacheKey, $pokemon, 600);
+
             return $pokemon;
         }
-        
+
         // Fetch from API and create new record
 
         $apiData = $this->api->getPokemon($pokemonName);
