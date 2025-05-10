@@ -25,7 +25,6 @@ trait InvalidatesPokemonCache
             }
         };
 
-        static::created($invalidateCache);
         static::updated($invalidateCache);
         static::deleted($invalidateCache);
     }

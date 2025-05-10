@@ -21,9 +21,9 @@ final readonly class PokemonService implements PokemonInterface
 
     public function findOrFetchPokemon(string $pokemonName, string $locale = 'en'): Pokemon
     {
-        $cacheKey = "pokemonn:$pokemonName-$locale";
-        $cacheTag = "pokemonn:$pokemonName";
-        
+        $cacheKey = "pokemon:$pokemonName-$locale";
+        $cacheTag = "pokemon:$pokemonName";
+
         // Try to get from cache
         $pokemon = Cache::tags($cacheTag)->get($cacheKey);
         if ($pokemon) {
@@ -38,7 +38,9 @@ final readonly class PokemonService implements PokemonInterface
         }
         
         // Fetch from API and create new record
+
         $apiData = $this->api->getPokemon($pokemonName);
+
         $pokemon = Pokemon::create([
             'pokemon_id' => $apiData['id'],
             'name' => $apiData['name'],
@@ -47,9 +49,9 @@ final readonly class PokemonService implements PokemonInterface
             'weight' => $apiData['weight'],
             'base_experience' => $apiData['base_experience'],
         ]);
-        
-        // GetPokemonDataJob::dispatch($pokemon);
-        
+
+        GetPokemonDataJob::dispatch($pokemon);
+
         return $pokemon;
     }
 
