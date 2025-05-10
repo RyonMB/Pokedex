@@ -57,20 +57,13 @@ class Pokemon extends Model
         ]
     ];
 
-    public function __construct(array $attributes = [], PokemonInterface $pokemonService)
-    {
-        parent::__construct($attributes);
-        $this->pokemonService = $pokemonService;
-    }
-    
-
     protected static function boot()
     {
         parent::boot();
 
         static::updated(function ($pokemon) {
             Cache::forget('pokemon:' . $pokemon->name);
-            $this->pokemonService->markAsChanged($pokemon, true);
+            app(PokemonInterface::class)->markAsChanged($pokemon, true);
         });
     }
 
