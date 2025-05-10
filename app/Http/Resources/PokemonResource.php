@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PokemonResource extends JsonResource
+final class PokemonResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,16 +19,16 @@ class PokemonResource extends JsonResource
         $isFavorite = $pokedex?->pivot->is_favorite;
 
         return [
-                'name' => $this->name,
-                'sprites' => $this->sprites,
-                'height' => $this->height,
-                'weight' => $this->weight,
-                'base_experience' => $this->base_experience,
-                'abilities' => AbilityCollection::make($this->abilities),
-                'pokedex' => [
-                    'is_in_pokedex' => isset($pokedex),
-                    'is_favorite' => (bool)$isFavorite,
-                ],
-            ];
+            'name' => $this->name,
+            'sprites' => $this->sprites,
+            'height' => $this->height,
+            'weight' => $this->weight,
+            'base_experience' => $this->base_experience,
+            'abilities' => AbilityCollection::make($this->abilities),
+            'pokedex' => [
+                'is_in_pokedex' => isset($pokedex),
+                'is_favorite' => (bool) $isFavorite,
+            ],
+        ];
     }
 }

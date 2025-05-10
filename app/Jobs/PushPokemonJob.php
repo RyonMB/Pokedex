@@ -1,32 +1,31 @@
 <?php
 
+
+
 namespace App\Jobs;
 
 use App\Contracts\PokemonApiInterface;
 use App\Contracts\PokemonInterface;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
 use App\Models\Pokemon;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
 
-class PushPokemonJob implements ShouldQueue, ShouldBeUnique
+final class PushPokemonJob implements ShouldBeUnique, ShouldQueue
 {
-    use Queueable, Batchable, SerializesModels;
-
-    /**
-     * The Pokemon to be processed
-     */
-    protected $pokemon;
+    use Batchable, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Pokemon $pokemon)
-    {
-        $this->pokemon = $pokemon;
-    }
+    public function __construct(
+        /**
+         * The Pokemon to be processed
+         */
+        private Pokemon $pokemon
+    ) {}
 
     /**
      * Execute the job.

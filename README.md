@@ -1,6 +1,7 @@
 # Pokedex API
 
 A Laravel-based backend application for managing and enriching Pokémon data, integrating with the public PokeAPI and providing a robust, secure, and extensible API for authenticated users.
+I used Contracts/Interfaces to demonstrate what I'm capable of, it could be a little bit overengineered for this purpose and would not use an interface in a real life application of this size.
 
 ---
 
@@ -61,7 +62,6 @@ See the API documentation for full request/response details and filter options.
 1. **Clone the repository:**
    ```bash
    git clone <repo-url>
-   cd pokedex-api
    ```
 2. **Install dependencies:**
    ```bash
@@ -91,12 +91,3 @@ See the API documentation for full request/response details and filter options.
 
 ---
 
-## Contributing
-
-Pull requests and issues are welcome! Please follow PSR-12 and Laravel conventions.
-
----
-
-## License
-
-This project is open-sourced under the [MIT license](https://opensource.org/licenses/MIT).

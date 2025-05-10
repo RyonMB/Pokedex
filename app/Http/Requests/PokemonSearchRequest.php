@@ -6,16 +6,16 @@ use App\Models\Pokemon;
 use App\Traits\FilterRequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
-class PokemonSearchRequest extends FormRequest
+final class PokemonSearchRequest extends FormRequest
 {
     use FilterRequestTrait;
-    
+
     /**
      * The model class to use for filter validation.
      * This property is required when using FilterRequestTrait.
      */
     protected $modelClass = Pokemon::class;
-    
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -35,21 +35,17 @@ class PokemonSearchRequest extends FormRequest
             // Add any additional request validation rules here
         ], $this->getFilterRules());
     }
-    
+
     /**
      * Get custom messages for validator errors.
-     *
-     * @return array
      */
     public function messages(): array
     {
         return array_merge(parent::messages(), $this->getFilterMessages());
     }
-    
+
     /**
      * Get custom attributes for validator errors.
-     *
-     * @return array
      */
     public function attributes(): array
     {

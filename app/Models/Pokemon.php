@@ -1,17 +1,18 @@
 <?php
 
+
+
 namespace App\Models;
 
-use App\Contracts\PokemonInterface;
 use App\Traits\Filter;
+use App\Traits\InvalidatesPokemonCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Cache;
 
-class Pokemon extends Model
+final class Pokemon extends Model
 {
-    use Filter;
+    use Filter, InvalidatesPokemonCache;
 
     protected $fillable = [
         'name',
@@ -30,42 +31,32 @@ class Pokemon extends Model
     protected $filters = [
         'name' => [
             'field' => 'name',
-            'method' => 'search'
+            'method' => 'search',
         ],
         'height' => [
             'field' => 'height',
-            'method' => 'range'
+            'method' => 'range',
         ],
         'weight' => [
             'field' => 'weight',
-            'method' => 'range'
+            'method' => 'range',
         ],
         'base_experience' => [
             'field' => 'base_experience',
-            'method' => 'range'
+            'method' => 'range',
         ],
         'ability' => [
             'relation' => 'abilities',
             'field' => 'abilities.name',
-            'method' => 'search'
+            'method' => 'search',
         ],
         'is_favorite' => [
             'relation' => 'pokemon_user',
             'field' => 'pokemon_user.is_favorite',
             'method' => 'exact',
-            'validation' => 'boolean'
-        ]
+            'validation' => 'boolean',
+        ],
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::updated(function ($pokemon) {
-            Cache::forget('pokemon:' . $pokemon->name);
-            app(PokemonInterface::class)->markAsChanged($pokemon, true);
-        });
-    }
 
     public function abilities(): BelongsToMany
     {
@@ -77,7 +68,8 @@ class Pokemon extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function pokemon_user(): BelongsTo{
+    public function pokemon_user(): BelongsTo
+    {
         return $this->belongsTo(PokemonUser::class);
     }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->json('name');
             $table->boolean('is_main_series')->default(false);
-            $table->json('effect_entries');
+            $table->json('effect_entries')->nullable();
             $table->timestamps();
         });
 

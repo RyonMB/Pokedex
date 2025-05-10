@@ -1,10 +1,10 @@
 <?php
 
+use App\Models\Pokemon;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\User;
-use App\Models\Pokemon;
 
 return new class extends Migration
 {
@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pokemon_user', function (Blueprint $table) {
+        Schema::create('pokemon_user', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Pokemon::class)->constrained()->cascadeOnDelete();

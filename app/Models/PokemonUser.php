@@ -1,11 +1,13 @@
 <?php
 
+
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class PokemonUser extends Pivot
+final class PokemonUser extends Pivot
 {
     protected $table = 'pokemon_user';
 

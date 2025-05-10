@@ -8,9 +8,8 @@ interface PokemonApiInterface
 {
     /**
      * Get a single pokemon by ID
-     * @param int $pokemonId
      */
-    public function getPokemon($pokemonId): array;
+    public function getPokemon(string|int $pokemonId): array;
 
     /**
      * Get a list of all pokemons
@@ -19,9 +18,10 @@ interface PokemonApiInterface
 
     /**
      * Get the ability of a pokemon
-     * @param int $pokemonId
+     *
+     * @param  string|int  $abilityId
      */
-    public function getPokemonAbility($pokemonId): array;
+    public function getPokemonAbility(string|int $ability): array;
 
     /**
      * Fetch data from a URL
@@ -30,7 +30,13 @@ interface PokemonApiInterface
 
     /**
      * Push a pokemon to the API
-     * @param Pokemon $pokemon
      */
     public function pushPokemon(Pokemon $pokemon): void;
+
+    /**
+     * Get ability translations and meta for a given ability name
+     *
+     * @return array ['id' => int, 'is_main_series' => bool, 'name' => [...], 'effect_entries' => [...]]
+     */
+    public function getAbilityTranslations(string $abilityName): array;
 }

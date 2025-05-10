@@ -1,31 +1,29 @@
 <?php
 
+
+
 namespace App\Services\v2;
 
 use App\Contracts\PokemonApiInterface;
 use App\Contracts\PokemonInterface;
-use App\Models\Pokemon;
-use App\Http\Requests\PokemonSearchRequest;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\PokemonFavoriteRequest;
 use App\Http\Requests\PokemonRequest;
+use App\Http\Requests\PokemonSearchRequest;
+use App\Jobs\GetPokemonDataJob;
+use App\Models\Ability;
+use App\Models\Pokemon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
-class PokemonService implements PokemonInterface
+final readonly class PokemonService implements PokemonInterface
 {
+    public function __construct(private PokemonApiInterface $api) {}
 
-
-    public function __construct(private PokemonApiInterface $api)
+    public function findOrFetchPokemon(string $pokemonName, string $locale = 'en'): Pokemon
     {
-    }
+        $pokemon = Cache::tags('pokemon:'.$pokemonName)->remember('pokemon:'.$pokemonName.'-'.$locale, 600, fn () => Pokemon::where('name', $pokemonName)->with('abilities')->first());
 
-    public function findOrFetchPokemon(string $pokemonName): Pokemon
-    {
-        $pokemon = Cache::remember('pokemon:' . $pokemonName, 600, function () use ($pokemonName) {
-            return Pokemon::where('name', $pokemonName)->first();
-        });
-
-        if (!$pokemon) {
+        if (! $pokemon) {
             $pokemon = $this->api->getPokemon($pokemonName);
 
             $pokemon = Pokemon::create([
@@ -36,6 +34,8 @@ class PokemonService implements PokemonInterface
                 'weight' => $pokemon['weight'],
                 'base_experience' => $pokemon['base_experience'],
             ]);
+
+            GetPokemonDataJob::dispatch($pokemon);
         }
 
         return $pokemon;
@@ -61,6 +61,7 @@ class PokemonService implements PokemonInterface
     {
         $pokemon = $this->findOrFetchPokemon($request->pokemon);
         $request->user()->pokemons()->syncWithoutDetaching($pokemon);
+
         return $pokemon;
     }
 
@@ -68,6 +69,7 @@ class PokemonService implements PokemonInterface
     {
         $pokemon = $this->findOrFetchPokemon($request->pokemon);
         $request->user()->pokemons()->detach($pokemon);
+
         return $pokemon;
     }
 
@@ -75,5 +77,25 @@ class PokemonService implements PokemonInterface
     {
         $pokemon->has_changed = $hasChanged;
         $pokemon->save();
+    }
+
+    public function syncPokemonAbilities(Pokemon $pokemon, array $abilitiesData): void
+    {
+        $abilityIds = [];
+        foreach ($abilitiesData as $abilityData) {
+            $ability = Ability::updateOrCreate(
+                ['id' => $abilityData['id'], 'name' => $abilityData['name']],
+                ['is_main_series' => $abilityData['is_main_series']]
+            );
+            foreach ($abilityData['name'] as $lang => $value) {
+                $ability->setTranslation('name', $lang, $value);
+            }
+            foreach ($abilityData['effect_entries'] as $lang => $value) {
+                $ability->setTranslation('effect_entries', $lang, $value);
+            }
+            $ability->save();
+            $abilityIds[] = $ability->id;
+        }
+        $pokemon->abilities()->sync($abilityIds);
     }
 }

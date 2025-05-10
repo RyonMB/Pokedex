@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pokemon', function (Blueprint $table) {
+        Schema::table('pokemon', function (Blueprint $table): void {
             $table->boolean('has_changed')->after('pokemon_id')->default(true);
             $table->dateTime('pushed_at')->after('updated_at')->nullable();
         });
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pokemon', function (Blueprint $table) {
+        Schema::table('pokemon', function (Blueprint $table): void {
             $table->dropColumn('has_changed');
             $table->dropColumn('pushed_at');
         });

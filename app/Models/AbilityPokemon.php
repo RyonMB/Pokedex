@@ -1,12 +1,17 @@
 <?php
 
+
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use App\Traits\InvalidatesPokemonCache;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class AbilityPokemon extends Pivot
+final class AbilityPokemon extends Pivot
 {
+    use InvalidatesPokemonCache;
+
     protected $table = 'ability_pokemon';
 
     public function pokemon(): BelongsTo
