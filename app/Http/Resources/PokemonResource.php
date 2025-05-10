@@ -14,7 +14,6 @@ final class PokemonResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         $pokedex = $request->user()->pokemons()->where('pokemon.id', $this->id)->withPivot('is_favorite')->first();
         $isFavorite = $pokedex?->pivot->is_favorite;
 

@@ -21,23 +21,35 @@ final readonly class PokemonService implements PokemonInterface
 
     public function findOrFetchPokemon(string $pokemonName, string $locale = 'en'): Pokemon
     {
-        $pokemon = Cache::tags('pokemon:'.$pokemonName)->remember('pokemon:'.$pokemonName.'-'.$locale, 600, fn () => Pokemon::where('name', $pokemonName)->with('abilities')->first());
-
-        if (! $pokemon) {
-            $pokemon = $this->api->getPokemon($pokemonName);
-
-            $pokemon = Pokemon::create([
-                'pokemon_id' => $pokemon['id'],
-                'name' => $pokemon['name'],
-                'sprites' => $pokemon['sprites'],
-                'height' => $pokemon['height'],
-                'weight' => $pokemon['weight'],
-                'base_experience' => $pokemon['base_experience'],
-            ]);
-
-            GetPokemonDataJob::dispatch($pokemon);
+        $cacheKey = "pokemonn:$pokemonName-$locale";
+        $cacheTag = "pokemonn:$pokemonName";
+        
+        // Try to get from cache
+        $pokemon = Cache::tags($cacheTag)->get($cacheKey);
+        if ($pokemon) {
+            return $pokemon;
         }
-
+        
+        // Try to get from database
+        $pokemon = Pokemon::where('name', $pokemonName)->with('abilities')->first();
+        if ($pokemon) {
+            Cache::tags($cacheTag)->put($cacheKey, $pokemon, 600);
+            return $pokemon;
+        }
+        
+        // Fetch from API and create new record
+        $apiData = $this->api->getPokemon($pokemonName);
+        $pokemon = Pokemon::create([
+            'pokemon_id' => $apiData['id'],
+            'name' => $apiData['name'],
+            'sprites' => $apiData['sprites'],
+            'height' => $apiData['height'],
+            'weight' => $apiData['weight'],
+            'base_experience' => $apiData['base_experience'],
+        ]);
+        
+        // GetPokemonDataJob::dispatch($pokemon);
+        
         return $pokemon;
     }
 

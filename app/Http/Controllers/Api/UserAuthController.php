@@ -5,6 +5,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GenerateTokenRequest;
 use App\Http\Requests\UserRegistrationRequest;
 use App\Http\Resources\TokenResource;
 use App\Models\User;
@@ -18,13 +19,8 @@ final class UserAuthController extends Controller
      *
      * @return TokenResource
      */
-    public function generateToken(Request $request)
+    public function generateToken(GenerateTokenRequest $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required',
-        ]);
-
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {

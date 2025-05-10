@@ -15,8 +15,8 @@ Route::prefix('v1')
 
         Route::get('/pokemon', [PokemonController::class, 'index']);
         Route::get('/pokemon/all', [PokemonController::class, 'all']);
-        Route::get('/pokemon/search', [PokemonController::class, 'show']);
         Route::post('/pokemon/attach', [PokemonController::class, 'attach']);
         Route::post('/pokemon/detach', [PokemonController::class, 'detach']);
         Route::post('/pokemon/favorite', [PokemonController::class, 'favorite']);
+        Route::get('/pokemon/search', [PokemonController::class, 'show']);
     });

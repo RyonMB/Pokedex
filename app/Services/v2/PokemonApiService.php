@@ -7,6 +7,7 @@ namespace App\Services\v2;
 use App\Contracts\PokemonApiInterface;
 use App\Models\Pokemon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 final class PokemonApiService implements PokemonApiInterface
 {
@@ -19,32 +20,41 @@ final class PokemonApiService implements PokemonApiInterface
         $this->client = new Client;
     }
 
+    private function safeRequest(string $method, string $uri): array
+    {
+        try {
+            $response = $this->client->request($method, $uri);
+            return json_decode($response->getBody(), true);
+        } catch (RequestException $e) {
+            $statusCode = $e->hasResponse() ? $e->getResponse()->getStatusCode() : null;
+
+            return [
+                'error' => true,
+                'message' => 'Pokemon API request failed',
+                'details' => $e->getMessage(),
+                'status_code' => $statusCode,
+            ];
+        }
+    }
+
     public function getPokemon(string|int $pokemonId): array
     {
-        $response = $this->client->request('GET', $this->baseUrl.'pokemon/'.$pokemonId);
-
-        return json_decode($response->getBody(), true);
+        return $this->safeRequest('GET', $this->baseUrl.'pokemon/'.$pokemonId);
     }
 
     public function getPokemonList(int $limit = 20, int $offset = 0): array
     {
-        $response = $this->client->request('GET', $this->baseUrl.'pokemon?limit='.$limit.'&offset='.$offset);
-
-        return json_decode($response->getBody(), true);
+        return $this->safeRequest('GET', $this->baseUrl.'pokemon?limit='.$limit.'&offset='.$offset);
     }
 
     public function getPokemonAbility(string|int $ability): array
     {
-        $response = $this->client->request('GET', $this->baseUrl.'ability/'.$ability);
-
-        return json_decode($response->getBody(), true);
+        return $this->safeRequest('GET', $this->baseUrl.'ability/'.$ability);
     }
 
     public function fetchFromUrl(string $url): array
     {
-        $response = $this->client->request('GET', $this->baseUrl.$url);
-
-        return json_decode($response->getBody(), true);
+        return $this->safeRequest('GET', $this->baseUrl.$url);
     }
 
     public function pushPokemon(Pokemon $pokemon): void
