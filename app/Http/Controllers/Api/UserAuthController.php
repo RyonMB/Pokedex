@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRegistrationRequest;
+use App\Http\Resources\TokenResource;
+
+class UserAuthController extends Controller
+{
+    /**
+     * Generate a token for a user
+     *
+     * @param Request $request
+     * @return TokenResource
+     */
+    public function generateToken(Request $request){
+        $request->validate([
+            'email'=>'required|string|email',
+            'password'=>'required'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if(!$user || !Hash::check($request->password, $user->password)){
+            return response()->json([
+                'message' => 'Invalid Credentials'
+            ], 401);
+        }
+        
+        $token = $user->generateToken($request->expires_at);
+        return new TokenResource($token);
+    }
+
+    /**
+     * Register a new user
+     *
+     * @param UserRegistrationRequest $request
+     * @return TokenResource
+     */ 
+    public function register(UserRegistrationRequest $request)
+    {
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'language' => $request->language,
+        ]);
+
+        $token = $user->generateToken($request->expires_at);
+        return new TokenResource($token);
+    }    
+
+    /**
+     * Revoke a token
+     *
+     * @param Request $request
+     * @param string $tokenId
+     * @return JsonResponse
+     */
+    public function revokeToken(Request $request, $tokenId){
+        $request->user()->tokens()->findOrFail($tokenId)->delete();
+    
+        return response()->json([
+          "message"=>"Revoked Successfully"
+        ]);
+    }
+
+    /**
+     * Revoke all tokens
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function revokeAllTokens(Request $request){
+        $request->user()->tokens()->delete();
+
+        return response()->json([
+            "message"=>"Revoked All Tokens Successfully"
+        ]);
+    }
+}
