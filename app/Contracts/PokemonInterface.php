@@ -16,6 +16,11 @@ interface PokemonInterface
     public function findOrFetchPokemon(string $pokemonName): Pokemon;
 
     /**
+     * Create a pokemon
+     */
+    public function createPokemon(array $data): Pokemon;
+
+    /**
      * Get all pokemons
      */
     public function all(PokemonSearchRequest $request): LengthAwarePaginator;

@@ -38,10 +38,17 @@ final readonly class PokemonService implements PokemonInterface
         }
 
         // Fetch from API and create new record
-
         $apiData = $this->api->getPokemon($pokemonName);
+        $pokemon = $this->createPokemon($apiData);
 
-        $pokemon = Pokemon::create([
+        GetPokemonDataJob::dispatch($pokemon);
+
+        return $pokemon;
+    }
+
+    public function createPokemon(array $apiData): Pokemon
+    {
+        return Pokemon::create([
             'pokemon_id' => $apiData['id'],
             'name' => $apiData['name'],
             'sprites' => $apiData['sprites'],
@@ -49,10 +56,6 @@ final readonly class PokemonService implements PokemonInterface
             'weight' => $apiData['weight'],
             'base_experience' => $apiData['base_experience'],
         ]);
-
-        GetPokemonDataJob::dispatch($pokemon);
-
-        return $pokemon;
     }
 
     public function all(PokemonSearchRequest $request): LengthAwarePaginator
