@@ -10,7 +10,7 @@ use App\Http\Requests\PokemonSearchRequest;
 use App\Jobs\GetPokemonDataJob;
 use App\Models\Ability;
 use App\Models\Pokemon;
-use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 
 final readonly class PokemonService implements PokemonInterface
@@ -19,7 +19,7 @@ final readonly class PokemonService implements PokemonInterface
 
     public function findOrFetchPokemon(string $pokemonName, string $locale = 'en'): Pokemon
     {
-        $pokemonName = strtolower($pokemonName);
+        $pokemonName = mb_strtolower($pokemonName);
         $cacheKey = "pokemon:$pokemonName-$locale";
         $cacheTag = "pokemon:$pokemonName";
 
@@ -55,12 +55,12 @@ final readonly class PokemonService implements PokemonInterface
         return $pokemon;
     }
 
-    public function all(PokemonSearchRequest $request): Collection
+    public function all(PokemonSearchRequest $request): LengthAwarePaginator
     {
-        return Pokemon::filter($request)->all();
+        return Pokemon::filter($request)->paginate(20);
     }
 
-    public function index(PokemonSearchRequest $request): Collection
+    public function index(PokemonSearchRequest $request): LengthAwarePaginator
     {
         return $request->user()->pokemons()->filter($request->all())->orderByPivot('is_favorite', 'desc')->paginate(20);
     }

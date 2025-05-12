@@ -6,7 +6,7 @@ use App\Http\Requests\PokemonFavoriteRequest;
 use App\Http\Requests\PokemonRequest;
 use App\Http\Requests\PokemonSearchRequest;
 use App\Models\Pokemon;
-use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface PokemonInterface
 {
@@ -18,12 +18,12 @@ interface PokemonInterface
     /**
      * Get all pokemons
      */
-    public function all(PokemonSearchRequest $request): Collection;
+    public function all(PokemonSearchRequest $request): LengthAwarePaginator;
 
     /**
      * Get all pokemons
      */
-    public function index(PokemonSearchRequest $request): Collection;
+    public function index(PokemonSearchRequest $request): LengthAwarePaginator;
 
     /**
      * Favorite a pokemon

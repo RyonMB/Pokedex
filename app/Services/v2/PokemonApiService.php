@@ -6,6 +6,7 @@ use App\Contracts\PokemonApiInterface;
 use App\Models\Pokemon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class PokemonApiService implements PokemonApiInterface
 {
@@ -86,13 +87,7 @@ final class PokemonApiService implements PokemonApiInterface
             return json_decode($response->getBody(), true);
         } catch (RequestException $e) {
             $statusCode = $e->hasResponse() ? $e->getResponse()->getStatusCode() : null;
-
-            return [
-                'error' => true,
-                'message' => 'Pokemon API request failed',
-                'details' => $e->getMessage(),
-                'status_code' => $statusCode,
-            ];
+            throw new HttpException($statusCode, 'Pokemon API request failed');
         }
     }
 }

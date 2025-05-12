@@ -25,7 +25,8 @@ I used Contracts/Interfaces to demonstrate what I'm capable of, it could be a li
 - **Validation:**
   - Automatic validation of filter and enrichment requests.
 - **Documentation:**
-  - Interactive OpenAPI/Swagger documentation (see `/docs` or Stoplight UI).
+  - Interactive OpenAPI/Swagger documentation (see `/docs`).
+  - **API documentation is always available at [`/docs`](http://localhost:8000/docs) when running the application locally.**
 
 ---
 
@@ -54,6 +55,18 @@ See the API documentation for full request/response details and filter options.
 - Uses Laravel's queue and batch processing for pushing Pokémon data to external APIs.
 - Efficient, memory-safe processing with chunking and cursor-based iteration.
 - Jobs are idempotent and robust against failures.
+
+---
+
+## Traits
+
+This project makes use of PHP Traits to promote code reuse and maintainability:
+
+- **Filter**: Adds advanced, extensible filtering capabilities to Eloquent models, supporting range, search, exact, and relation-aware filters.
+- **FilterRequestTrait**: Provides dynamic validation rules and messages for filterable API requests, ensuring robust and consistent input validation.
+- **InvalidatesPokemonCache**: Automatically invalidates relevant Pokémon cache entries and marks them as changed when models are updated or deleted, ensuring data consistency.
+
+Traits are located in `app/Traits/` and are used throughout the codebase to encapsulate reusable logic.
 
 ---
 
@@ -88,6 +101,18 @@ See the API documentation for full request/response details and filter options.
   ```bash
   php artisan test
   ```
+
+---
+
+## Code Quality & Standardization
+
+To ensure code quality and consistency, this project uses automated tools for linting and refactoring. You can run the following command to automatically fix code style issues and apply safe refactorings:
+
+```bash
+composer fix
+```
+
+This will run both Rector (for automated code refactoring) and Pint (for code style/linting) according to the project's configuration. It is recommended to run this command before committing code to maintain a clean and standardized codebase.
 
 ---
 
