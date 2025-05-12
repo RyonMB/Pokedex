@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Traits\Filter;
 use App\Traits\InvalidatesPokemonCache;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 final class Pokemon extends Model
@@ -49,8 +48,8 @@ final class Pokemon extends Model
             'method' => 'search',
         ],
         'is_favorite' => [
-            'relation' => 'pokemon_user',
-            'field' => 'pokemon_user.is_favorite',
+            'relation' => 'users',
+            'field' => 'is_favorite',
             'method' => 'exact',
             'validation' => 'boolean',
         ],
@@ -63,11 +62,6 @@ final class Pokemon extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
-    }
-
-    public function pokemon_user(): BelongsTo
-    {
-        return $this->belongsTo(PokemonUser::class);
+        return $this->belongsToMany(User::class)->withPivot('is_favorite');
     }
 }
